@@ -226,6 +226,8 @@ func cmdServe() {
 		os.Exit(1)
 	}
 
+	cfg.WarnDefaultCredentials()
+
 	logLevel := slog.LevelInfo
 	switch cfg.Server.LogLevel {
 	case "debug":

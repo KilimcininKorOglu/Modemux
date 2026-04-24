@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 	"time"
 
@@ -157,4 +158,17 @@ func FindAndLoad() (*Config, error) {
 	}
 
 	return Default(), nil
+}
+
+func (c *Config) WarnDefaultCredentials() {
+	for user, pass := range c.Auth.Users {
+		if pass == "changeme" {
+			slog.Warn("default credentials detected, change immediately",
+				"user", user, "config_key", "auth.users")
+		}
+	}
+	if c.Proxy.Password == "changeme" {
+		slog.Warn("default proxy password detected, change immediately",
+			"config_key", "proxy.password")
+	}
 }
