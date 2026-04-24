@@ -1,6 +1,7 @@
 package api
 
 import (
+	"crypto/subtle"
 	"encoding/base64"
 	"time"
 
@@ -39,7 +40,7 @@ func basicAuthMiddleware(users map[string]string) fiber.Handler {
 		}
 
 		expected, exists := users[user]
-		if !exists || expected != pass {
+		if !exists || subtle.ConstantTimeCompare([]byte(expected), []byte(pass)) != 1 {
 			return c.Status(fiber.StatusUnauthorized).JSON(errorResponse("invalid credentials"))
 		}
 
