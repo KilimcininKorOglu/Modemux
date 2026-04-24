@@ -136,7 +136,20 @@ curl -X POST -u admin:changeme http://localhost:8080/api/modems/0/rotate
 
 The web dashboard runs on the same port as the API (default: 8080). Built with Go Templ and HTMX for server-rendered real-time updates without JavaScript frameworks. Protected by cookie-based session authentication.
 
-Features:
+### Dashboard Overview
+
+Status bar with system metrics, modem cards showing operator, signal, IP, IMEI, and one-click IP rotation.
+
+![Dashboard](screenshots/dashboard.png)
+
+### Event Log
+
+Filterable event log with per-modem filter chips.
+
+![Events](screenshots/events.png)
+
+### Features
+
 - Login page with session-based auth (credentials from `config.yaml`)
 - System status bar: uptime, connected modems, total rotations, unique IPs, memory usage
 - Modem cards with operator, signal bars, IP, uptime, rotation count, IMEI, cooldown indicator

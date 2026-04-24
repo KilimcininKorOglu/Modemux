@@ -9,5 +9,6 @@ config.yaml
 *_templ.go
 .playwright-mcp/
 *.png
+!screenshots/*.png
 *.exe
 .DS_Store
