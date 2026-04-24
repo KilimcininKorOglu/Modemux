@@ -2,7 +2,6 @@ package proxy
 
 import (
 	"encoding/base64"
-	"fmt"
 	"io"
 	"log/slog"
 	"net"
@@ -97,7 +96,8 @@ func (p *HTTPProxy) authenticate(r *http.Request) bool {
 func (p *HTTPProxy) handleConnect(w http.ResponseWriter, r *http.Request) {
 	destConn, err := p.dialer.Dial("tcp", r.Host)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadGateway)
+		slog.Error("proxy CONNECT failed", "host", r.Host, "error", err)
+		http.Error(w, "Bad Gateway", http.StatusBadGateway)
 		return
 	}
 	defer destConn.Close()
@@ -138,7 +138,8 @@ func (p *HTTPProxy) handleHTTP(w http.ResponseWriter, r *http.Request) {
 
 	resp, err := transport.RoundTrip(r)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("proxy error: %v", err), http.StatusBadGateway)
+		slog.Error("proxy request failed", "url", r.URL.String(), "error", err)
+		http.Error(w, "Bad Gateway", http.StatusBadGateway)
 		return
 	}
 	defer resp.Body.Close()
