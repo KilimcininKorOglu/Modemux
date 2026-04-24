@@ -23,7 +23,8 @@ var BuildVersion = "dev"
 func RegisterRoutes(app *fiber.App, ctrl modem.Controller, st *store.Store, rotator *rotation.Rotator, proxyMgr *proxy.Manager, users map[string]string) {
 	templates.AssetVersion = BuildVersion
 	sessions := NewSessionStore(24 * time.Hour)
-	h := NewHandler(ctrl, st, rotator, proxyMgr, sessions, users)
+	limiter := NewLoginLimiter(5, time.Minute)
+	h := NewHandler(ctrl, st, rotator, proxyMgr, sessions, users, limiter)
 
 	staticFS, _ := fs.Sub(staticFiles, "static")
 	app.Use("/static", noCacheHeaders, static.New("", static.Config{

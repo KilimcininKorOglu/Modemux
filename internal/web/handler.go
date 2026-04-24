@@ -1,6 +1,7 @@
 package web
 
 import (
+	"crypto/subtle"
 	"fmt"
 	"runtime"
 	"strconv"
@@ -23,9 +24,10 @@ type Handler struct {
 	proxyMgr *proxy.Manager
 	sessions *SessionStore
 	users    map[string]string
+	limiter  *LoginLimiter
 }
 
-func NewHandler(ctrl modem.Controller, st *store.Store, rotator *rotation.Rotator, proxyMgr *proxy.Manager, sessions *SessionStore, users map[string]string) *Handler {
+func NewHandler(ctrl modem.Controller, st *store.Store, rotator *rotation.Rotator, proxyMgr *proxy.Manager, sessions *SessionStore, users map[string]string, limiter *LoginLimiter) *Handler {
 	return &Handler{
 		ctrl:     ctrl,
 		store:    st,
@@ -33,6 +35,7 @@ func NewHandler(ctrl modem.Controller, st *store.Store, rotator *rotation.Rotato
 		proxyMgr: proxyMgr,
 		sessions: sessions,
 		users:    users,
+		limiter:  limiter,
 	}
 }
 
@@ -41,11 +44,16 @@ func (h *Handler) LoginPage(c fiber.Ctx) error {
 }
 
 func (h *Handler) LoginPost(c fiber.Ctx) error {
+	if !h.limiter.Allow(c.IP()) {
+		return render(c, templates.LoginPage("Too many login attempts. Try again later."))
+	}
+
 	username := c.FormValue("username")
 	password := c.FormValue("password")
 
 	expected, exists := h.users[username]
-	if !exists || expected != password {
+	if !exists || subtle.ConstantTimeCompare([]byte(expected), []byte(password)) != 1 {
+		h.limiter.Record(c.IP())
 		return render(c, templates.LoginPage("Invalid username or password"))
 	}
 
