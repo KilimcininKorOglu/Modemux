@@ -1,0 +1,60 @@
+package templates
+
+import "fmt"
+
+type EventRow struct {
+	Time    string
+	ModemID string
+	Event   string
+	Detail  string
+}
+
+templ EventsPage(events []EventRow, modemFilter string, hasMore bool, offset int) {
+	@Layout("Modemux - Events", 0, "") {
+		<h2 class="section-title">Modem Events</h2>
+		<div class="filter-bar">
+			<a href="/events" class={ "filter-chip", templ.KV("active", modemFilter == "") }>All</a>
+			<a href="/events?modem=0" class={ "filter-chip", templ.KV("active", modemFilter == "0") }>Modem 0</a>
+			<a href="/events?modem=1" class={ "filter-chip", templ.KV("active", modemFilter == "1") }>Modem 1</a>
+			<a href="/events?modem=2" class={ "filter-chip", templ.KV("active", modemFilter == "2") }>Modem 2</a>
+		</div>
+		if len(events) == 0 {
+			<div class="empty-state">No events yet</div>
+		} else {
+			<table class="history-table">
+				<thead>
+					<tr>
+						<th>Time</th>
+						<th>Modem</th>
+						<th>Event</th>
+						<th>Detail</th>
+					</tr>
+				</thead>
+				<tbody id="event-rows">
+					for _, e := range events {
+						@EventRowFragment(e)
+					}
+				</tbody>
+			</table>
+			if hasMore {
+				<button
+					class="load-more"
+					hx-get={ fmt.Sprintf("/web/events?modem=%s&offset=%d", modemFilter, offset) }
+					hx-target="#event-rows"
+					hx-swap="beforeend"
+				>
+					Load more...
+				</button>
+			}
+		}
+	}
+}
+
+templ EventRowFragment(e EventRow) {
+	<tr>
+		<td>{ e.Time }</td>
+		<td>{ e.ModemID }</td>
+		<td>{ e.Event }</td>
+		<td>{ e.Detail }</td>
+	</tr>
+}

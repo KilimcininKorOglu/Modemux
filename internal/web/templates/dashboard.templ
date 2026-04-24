@@ -1,0 +1,13 @@
+package templates
+
+templ Dashboard(modems []ModemCardData, history []HistoryRow, hasMore bool, status StatusBarData) {
+	@Layout("Modemux Dashboard", len(modems), status.Uptime) {
+		@StatusBar(status)
+		<div class="modem-grid" hx-get="/web/modems" hx-trigger="every 10s" hx-swap="innerHTML">
+			for _, m := range modems {
+				@ModemCard(m)
+			}
+		</div>
+		@IPHistory(history, hasMore, len(history))
+	}
+}

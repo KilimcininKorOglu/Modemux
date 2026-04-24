@@ -1,0 +1,49 @@
+version: 2
+
+before:
+  hooks:
+    - go install github.com/a-h/templ/cmd/templ@latest
+    - templ generate ./internal/web/templates/
+
+builds:
+  - id: modemux
+    main: ./cmd/modemux
+    binary: modemux
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w -X main.version={{.Version}}
+
+archives:
+  - id: default
+    format: tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - configs/config.example.yaml
+      - scripts/**/*
+      - LICENSE*
+      - README*
+
+checksum:
+  name_template: "checksums.txt"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^ci:"
+      - "^chore:"
+
+release:
+  github:
+    owner: KilimcininKorOglu
+    name: modemux
+  draft: false
+  prerelease: auto

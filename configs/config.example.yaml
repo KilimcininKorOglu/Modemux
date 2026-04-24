@@ -1,0 +1,38 @@
+server:
+  host: "0.0.0.0"
+  api_port: 8080
+  log_level: "info"
+
+auth:
+  users:
+    admin: "changeme"
+
+modems:
+  scan_interval: 30s
+  auto_connect: true
+  default_apn: "internet"
+  overrides: []
+
+proxy:
+  http_port_start: 8901
+  socks5_port_start: 1081
+  auth_required: true
+  username: "proxy"
+  password: "changeme"
+
+rotation:
+  cooldown: 10s
+  timeout: 30s
+  auto_rotate: false
+  auto_interval: 5m
+
+storage:
+  database_path: "./data/modemux.db"
+  retention_days: 30
+
+wireguard:
+  enabled: false
+  vps_endpoint: ""
+  vps_public_key: ""
+  local_private_key: ""
+  tunnel_subnet: "10.0.0.0/24"

@@ -1,0 +1,13 @@
+bin/
+data/
+dist/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+config.yaml
+*_templ.go
+.playwright-mcp/
+*.png
+*.exe
+.DS_Store

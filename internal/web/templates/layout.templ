@@ -1,0 +1,39 @@
+package templates
+
+templ Layout(title string, modems int, uptime string) {
+	<!DOCTYPE html>
+	<html lang="en">
+	<head>
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<title>{ title }</title>
+		<link rel="stylesheet" href={ staticURL("/static/css/app.css") }/>
+		<script src={ staticURL("/static/js/htmx.min.js") }></script>
+	</head>
+	<body>
+		<header>
+			<div class="container">
+				<div>
+					<h1><span class="dot"></span> Modemux</h1>
+					<nav class="nav-links">
+						<a href="/" class="active">Dashboard</a>
+						<a href="/events">Events</a>
+					</nav>
+				</div>
+				<div class="nav-right">
+					<div class="status-bar">
+						<span>Modems: <strong>{ itoa(modems) }</strong></span>
+						<span>Uptime: <strong>{ uptime }</strong></span>
+					</div>
+					<form method="POST" action="/logout" style="margin:0">
+						<button type="submit" class="btn-logout">Logout</button>
+					</form>
+				</div>
+			</div>
+		</header>
+		<main class="container">
+			{ children... }
+		</main>
+	</body>
+	</html>
+}

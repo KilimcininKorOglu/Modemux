@@ -1,0 +1,35 @@
+package templates
+
+templ StatusBar(data StatusBarData) {
+	<div class="status-panel" id="status-panel" hx-get="/web/status" hx-trigger="every 30s" hx-swap="outerHTML">
+		<div class="stat-item">
+			<div class="stat-value">{ data.Uptime }</div>
+			<div class="stat-label">Uptime</div>
+		</div>
+		<div class="stat-item">
+			<div class="stat-value">{ itoa(data.ConnectedModems) }/{ itoa(data.TotalModems) }</div>
+			<div class="stat-label">Modems</div>
+		</div>
+		<div class="stat-item">
+			<div class="stat-value">{ itoa(data.TotalRotations) }</div>
+			<div class="stat-label">Rotations</div>
+		</div>
+		<div class="stat-item">
+			<div class="stat-value">{ itoa(data.UniqueIPs) }</div>
+			<div class="stat-label">Unique IPs</div>
+		</div>
+		<div class="stat-item">
+			<div class="stat-value">{ data.MemoryMB }</div>
+			<div class="stat-label">Memory</div>
+		</div>
+	</div>
+}
+
+type StatusBarData struct {
+	Uptime          string
+	TotalModems     int
+	ConnectedModems int
+	TotalRotations  int
+	UniqueIPs       int
+	MemoryMB        string
+}

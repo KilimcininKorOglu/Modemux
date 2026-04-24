@@ -1,0 +1,57 @@
+package templates
+
+import "fmt"
+
+type HistoryRow struct {
+	Time       string
+	ModemID    string
+	OldIP      string
+	NewIP      string
+	DurationMs int64
+}
+
+templ IPHistory(rows []HistoryRow, hasMore bool, offset int) {
+	<div id="ip-history">
+		<h2 class="section-title">IP Rotation History</h2>
+		if len(rows) == 0 {
+			<div class="empty-state">No rotations yet</div>
+		} else {
+			<table class="history-table">
+				<thead>
+					<tr>
+						<th>Time</th>
+						<th>Modem</th>
+						<th>Old IP</th>
+						<th>New IP</th>
+						<th>Duration</th>
+					</tr>
+				</thead>
+				<tbody id="history-rows">
+					for _, r := range rows {
+						@HistoryRowFragment(r)
+					}
+				</tbody>
+			</table>
+			if hasMore {
+				<button
+					class="load-more"
+					hx-get={ fmt.Sprintf("/web/history?offset=%d", offset) }
+					hx-target="#history-rows"
+					hx-swap="beforeend"
+				>
+					Load more...
+				</button>
+			}
+		}
+	</div>
+}
+
+templ HistoryRowFragment(r HistoryRow) {
+	<tr>
+		<td>{ r.Time }</td>
+		<td>{ r.ModemID }</td>
+		<td>{ r.OldIP }</td>
+		<td>{ r.NewIP }</td>
+		<td>{ formatDuration(r.DurationMs) }</td>
+	</tr>
+}

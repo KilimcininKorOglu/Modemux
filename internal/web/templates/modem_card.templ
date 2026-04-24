@@ -1,0 +1,94 @@
+package templates
+
+import "fmt"
+
+type ModemCardData struct {
+	Index             int
+	Model             string
+	Manufacturer      string
+	State             string
+	Operator          string
+	Signal            int
+	IP                string
+	HTTPPort          int
+	SOCKS5Port        int
+	IMEI              string
+	Uptime            string
+	RotationCount     int
+	CooldownActive    bool
+	CooldownRemaining string
+}
+
+templ ModemCard(m ModemCardData) {
+	<div class="modem-card" id={ fmt.Sprintf("modem-%d", m.Index) }>
+		<div class="card-header">
+			<div>
+				<div class="card-title">{ fmt.Sprintf("Modem %d", m.Index) }</div>
+				<div class="card-subtitle">{ m.Manufacturer } { m.Model }</div>
+			</div>
+			if m.State == "connected" {
+				<span class="badge badge-green"><span class="dot"></span> Connected</span>
+			} else if m.State == "rotating" {
+				<span class="badge badge-yellow"><span class="dot"></span> Rotating</span>
+			} else {
+				<span class="badge badge-red"><span class="dot"></span> { m.State }</span>
+			}
+		</div>
+		<div class="info-grid">
+			<div class="info-item">
+				<div class="label">Operator</div>
+				<div class="value">{ m.Operator }</div>
+			</div>
+			<div class="info-item">
+				<div class="label">Signal</div>
+				<div class="value">
+					<div class="signal-bar">
+						for i := 1; i <= 5; i++ {
+							if i <= signalBars(m.Signal) {
+								<div class="bar active" style={ fmt.Sprintf("height: %dpx", 4+i*2) }></div>
+							} else {
+								<div class="bar" style={ fmt.Sprintf("height: %dpx", 4+i*2) }></div>
+							}
+						}
+					</div>
+					{ itoa(m.Signal) }%
+				</div>
+			</div>
+			<div class="info-item">
+				<div class="label">IP Address</div>
+				<div class="value">{ m.IP }</div>
+			</div>
+			<div class="info-item">
+				<div class="label">Uptime</div>
+				<div class="value">{ m.Uptime }</div>
+			</div>
+			<div class="info-item">
+				<div class="label">Rotations</div>
+				<div class="value">{ itoa(m.RotationCount) }</div>
+			</div>
+			<div class="info-item">
+				<div class="label">IMEI</div>
+				<div class="value imei">{ m.IMEI }</div>
+			</div>
+		</div>
+		<div class="proxy-ports">
+			<span class="port-badge">HTTP :{ itoa(m.HTTPPort) }</span>
+			<span class="port-badge">SOCKS5 :{ itoa(m.SOCKS5Port) }</span>
+		</div>
+		if m.CooldownActive {
+			<button class="btn btn-primary" disabled>
+				<span class="btn-text">Cooldown { m.CooldownRemaining }</span>
+			</button>
+		} else {
+			<button
+				class="btn btn-primary"
+				hx-post={ fmt.Sprintf("/web/modems/%d/rotate", m.Index) }
+				hx-target={ fmt.Sprintf("#modem-%d", m.Index) }
+				hx-swap="outerHTML"
+			>
+				<span class="spinner"></span>
+				<span class="btn-text">Rotate IP</span>
+			</button>
+		}
+	</div>
+}

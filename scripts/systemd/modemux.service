@@ -1,0 +1,34 @@
+[Unit]
+Description=Mobile Proxy Management Service
+Documentation=https://github.com/KilimcininKorOglu/modemux
+After=network-online.target ModemManager.service
+Wants=network-online.target ModemManager.service
+
+[Service]
+Type=simple
+User=modemux
+Group=modemux
+ExecStart=/usr/local/bin/modemux serve --config /etc/modemux/config.yaml
+WorkingDirectory=/var/lib/modemux
+Restart=always
+RestartSec=5
+
+LimitNOFILE=65536
+
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/modemux
+PrivateTmp=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+
+SupplementaryGroups=dialout
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=modemux
+
+[Install]
+WantedBy=multi-user.target
