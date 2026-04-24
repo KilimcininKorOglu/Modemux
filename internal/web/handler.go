@@ -63,6 +63,7 @@ func (h *Handler) LoginPost(c fiber.Ctx) error {
 		Name:     "modemux_session",
 		Value:    session.Token,
 		HTTPOnly: true,
+		Secure:   c.Protocol() == "https",
 		SameSite: "Lax",
 		Path:     "/",
 		MaxAge:   int(h.sessions.ttl.Seconds()),
