@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v3"
-	"github.com/gofiber/fiber/v3/middleware/cors"
 	"github.com/gofiber/fiber/v3/middleware/logger"
 	"github.com/gofiber/fiber/v3/middleware/recover"
 
@@ -55,8 +54,6 @@ func (s *Server) setupRoutes() {
 		Format:     "${time} ${status} ${method} ${path} ${latency}\n",
 		TimeFormat: "15:04:05",
 	}))
-	s.app.Use(cors.New())
-
 	s.app.Get("/healthz", s.handleHealthz)
 	s.app.Get("/readyz", s.handleReadyz)
 
