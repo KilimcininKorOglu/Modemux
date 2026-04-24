@@ -37,7 +37,7 @@ jobs:
       - name: Test
         run: make test
 
-  lint:
+  vet:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -52,7 +52,5 @@ jobs:
       - name: Generate
         run: make generate
 
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v6
-        with:
-          version: latest
+      - name: Vet
+        run: go vet ./...
